@@ -76,6 +76,48 @@ app.get('/livros/:id', (req, res) => {
   res.json(livro);
 });
 
+// Rota para adicionar um novo livro
+app.post('/livros', (req, res) => {
+  const novoLivro = req.body;
+
+  novoLivro.id = (livros.length + 1).toString(); 
+
+  livros.push(novoLivro);
+
+  res.status(201).json(novoLivro);
+});
+
+// Rota para atualizar um livro existente
+app.put('/livros/:id', (req, res) => {
+  const livroId = req.params.id;
+  const livroAtualizado = req.body;
+
+  const index = livros.findIndex(livro => livro.id === livroId);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "Livro não encontrado" });
+  }
+
+  // Atualizando as informações do livro
+  livros[index] = { ...livros[index], ...livroAtualizado };
+
+  res.status(200).json(livros[index]);
+});
+
+// Rota para excluir um livro
+app.delete('/livros/:id', (req, res) => {
+  const livroId = req.params.id;
+  const index = livros.findIndex(livro => livro.id === livroId);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "Livro não encontrado" });
+  }
+
+  livros.splice(index, 1); 
+
+  res.status(200).json({ message: "Livro excluído com sucesso" });
+});
+
 // Inicia o servidor
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
